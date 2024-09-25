@@ -1,8 +1,18 @@
 package ru.ssau.tk.cucumber.oopLab1.Task3;
 
 class MyFirstClass {
-    public static void main(String[] s) {
-        System.out.println("Hello world!!!");
+    public static void main(String[] args) {
+        MySecondClass o = new MySecondClass(5, 6);
+        int i, j;
+        for (i = 1; i <= 8; i++) {
+            for(j = 1; j <= 8; j++) {
+                o.setBoka(i);
+                o.setZhoka(j);
+                System.out.print(o.activate());
+                System.out.print(" ");
+            }
+            System.out.println();
+        }
     }
 }
 class MySecondClass{
@@ -26,18 +36,5 @@ class MySecondClass{
     }
     public int activate(){
         return (boka + zhoka);
-    }
-    public static void main(String[] args) {
-        MySecondClass o = new MySecondClass(5, 6);
-        int i, j;
-        for (i = 1; i <= 8; i++) {
-            for(j = 1; j <= 8; j++) {
-                o.setBoka(i);
-                o.setZhoka(j);
-                System.out.print(o.activate());
-                System.out.print(" ");
-            }
-            System.out.println();
-        }
     }
 }

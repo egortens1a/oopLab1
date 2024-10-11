@@ -1,27 +1,27 @@
-package ru.ssau.tk.cucumber.oopLab2.functions;
+package functions;
 
 public class FunctionPoint {
-    double x;
-    double y;
-    FunctionPoint(){
-        this.x = 0;
-        this.y = 0;
+    private double x;
+    private double y;
+    public FunctionPoint(){
+        x = 0;
+        y = 0;
     }
-    FunctionPoint(double x, double y){
+    public FunctionPoint(double x, double y){
         this.x = x;
         this.y = y;
     }
-    FunctionPoint(FunctionPoint point){
-        this.x = point.getX();
-        this.y = point.getY();
+    public FunctionPoint(FunctionPoint point){
+        x = point.getX();
+        y = point.getY();
     }
 
     public double getX() {
-        return x;
+        return this.x;
     }
 
     public double getY() {
-        return y;
+        return this.y;
     }
 
     public void setX(double x) {
@@ -31,8 +31,13 @@ public class FunctionPoint {
     public void setY(double y) {
         this.y = y;
     }
+
     public void setPoint(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+    public void setPoint(FunctionPoint p) {
+        x = p.getX();
+        y = p.getY();
     }
 }

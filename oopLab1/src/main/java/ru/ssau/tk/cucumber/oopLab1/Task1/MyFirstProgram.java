@@ -1,7 +1,5 @@
-package ru.ssau.tk.cucumber.oopLab1.Task1;
-
 class MyFirstClass {
-    public static void main(String[] s) {
+    public static void not_main(String[] s) {
         System.out.println("Hello world!!!");
     }
 }

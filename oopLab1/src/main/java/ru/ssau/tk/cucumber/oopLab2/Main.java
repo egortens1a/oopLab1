@@ -15,62 +15,62 @@ public class Main {
         TabulatedFunction func1 = new TabulatedFunction(start, end, valuesY);
         print(func1);
 
-        System.out.println("LLL__Вычисление__точек__с__помощью__getFunctionValue__|||");
+        System.out.println("\nLLL__Вычисление__точек__с__помощью__getFunctionValue__|||");
 
         double step = 0.25;
         printWithGetFunctionValue(start, end, step, func1);
 
-        System.out.println("Левая граница: " + func1.getLeftDomainBorder());
-        System.out.println("Правая граница: " + func1.getRightDomainBorder());
+        printBordersAndPointsCount(func1);
 
         System.out.println("\nLLL__Добавление_____точек__|||");
         TabulatedFunction func2 = new TabulatedFunction(start, end, 5);
 
         for(int x = 0; x < func2.getPointsCount(); ++x){
-            func2.getPoint(x).setY((double) x/2);
+            func2.setPointY(x, 4*(x*x));
         }
 
         print(func2);
-
-        func2.addPoint(new FunctionPoint(100,100));
-        func2.addPoint(new FunctionPoint(4.5, 10000));
-        func2.addPoint(new FunctionPoint(-1, -100));
-        System.out.println("Обновленный набор точек: ");
+        printBordersAndPointsCount(func2);
+        System.out.println("\nДобавление точек");
+        func2.addPoint(new FunctionPoint(10000, 99999));
+        func2.addPoint(new FunctionPoint(4.5, 99999));
+        func2.addPoint(new FunctionPoint(-1, 99999));
+        func2.addPoint(new FunctionPoint(-2, 99999));
+        func2.addPoint(new FunctionPoint(100, 99999));
+        func2.addPoint(new FunctionPoint(111, 99999));
+        System.out.println("\nОбновленный набор точек: ");
         print(func2);
 
-        System.out.println("Левая граница: " + func2.getLeftDomainBorder());
-        System.out.println("Правая граница: " + func2.getRightDomainBorder());
+        printBordersAndPointsCount(func2);
 
         System.out.println("\nLLL__Удаление______точки__|||");
         func2.deletePoint(2);
         print(func2);
-
-        System.out.println("____________");
-
+        printBordersAndPointsCount(func2);
     }
 
-    public static void print(TabulatedFunction func) {
+    private static void printBordersAndPointsCount(TabulatedFunction func){
+        System.out.println("Левая граница: " + func.getLeftDomainBorder());
+        System.out.println("Правая граница: " + func.getRightDomainBorder());
+        System.out.println("Количество точек: " + func.getPointsCount());
+    }
+    private static void print(TabulatedFunction func) {
         System.out.println("x  |  y");
         for(int i = 0; i < func.getPointsCount(); ++i){
             System.out.println(func.getPointX(i) + " | " + func.getPointY(i));
         }
     }
     private static void printWithGetFunctionValue(double start, double end, double step, TabulatedFunction func){
-        double x = start-1;
         System.out.println("x  |  y");
-        System.out.println(x + " | " + func.getFunctionValue(x));
 
-        for(int i = 0; i < func.getPointsCount(); ++i){
-            x = func.getPointX(i);
+        for(double x = start-1; x < func.getRightDomainBorder(); x+=0.25){
+            System.out.println(x + " | " + func.getFunctionValue(x));
+            x+=step;
             System.out.println(x + " | " + func.getFunctionValue(x));
             x+=step;
             System.out.println(x + " | " + func.getFunctionValue(x));
             x+=step;
             System.out.println(x + " | " + func.getFunctionValue(x));
         }
-
-        x = end+1;
-        System.out.println(x + " | " + func.getFunctionValue(x));
-
     }
 }

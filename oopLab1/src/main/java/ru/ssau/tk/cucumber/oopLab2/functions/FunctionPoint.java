@@ -31,11 +31,6 @@ public class FunctionPoint {
     public void setY(double y) {
         this.y = y;
     }
-
-    public void setPoint(double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
     public void setPoint(FunctionPoint p) {
         x = p.getX();
         y = p.getY();

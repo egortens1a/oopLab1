@@ -1,7 +1,5 @@
-package ru.ssau.tk.cucumber.oopLab1.Task3;
-
 class MyFirstClass {
-    public static void main(String[] args) {
+    public static void not_main(String[] args) {
         MySecondClass o = new MySecondClass(5, 6);
         int i, j;
         for (i = 1; i <= 8; i++) {

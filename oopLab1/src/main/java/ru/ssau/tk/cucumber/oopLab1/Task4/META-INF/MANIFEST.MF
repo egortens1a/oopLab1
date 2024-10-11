@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Created-By: Khorobrykh
-Main-Class: ru.ssau.tk.cucumber.oopLab1.Task4.MyFirstClass
-

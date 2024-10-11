@@ -1,4 +1,4 @@
-package ru.ssau.tk.cucumber.oopLab1.Task4.myfirstpackage;
+package myfirstpackage;
 
 public class MyFirstPackage{
     private int boka;

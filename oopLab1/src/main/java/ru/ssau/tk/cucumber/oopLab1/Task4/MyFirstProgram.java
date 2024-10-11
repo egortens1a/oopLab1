@@ -1,9 +1,7 @@
-package ru.ssau.tk.cucumber.oopLab1.Task4;
+import myfirstpackage.MyFirstPackage;
 
-import ru.ssau.tk.cucumber.oopLab1.Task4.myfirstpackage.MyFirstPackage;
-
-class MyFirstClass {
-    public static void main(String[] args) {
+class My4Class {
+    public static void not_main(String[] args) {
         MyFirstPackage o = new MyFirstPackage(5, 6);
         int i, j;
         for (i = 1; i <= 8; i++) {

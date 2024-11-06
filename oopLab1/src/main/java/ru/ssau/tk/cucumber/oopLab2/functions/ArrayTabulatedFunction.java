@@ -1,8 +1,12 @@
-package functions;
+package ru.ssau.tk.cucumber.oopLab2.functions;
 
-import static java.lang.Math.*;
+import java.io.Serial;
+import java.io.Serializable;
 
-public class ArrayTabulatedFunction implements TabulatedFunction{
+public class ArrayTabulatedFunction implements TabulatedFunction, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -6256072091640092596L;
 
     private FunctionPoint[] values;
     private int pointsCount;
@@ -39,8 +43,8 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
         return pointsCount;
     }
 
-    public ArrayTabulatedFunction(double left, double right, int pointsCount){
-        if (Double.compare(left, right) == 1){
+    public ArrayTabulatedFunction(double left, double right, int pointsCount) throws IllegalStateException{
+        if (Double.compare(left, right) >= 0){
             throw new IllegalArgumentException("LeftDomainBorder > RightDomainBorder");
         }
         this.pointsCount = pointsCount;
@@ -48,12 +52,24 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
         double x = left;
         for (int i = 0; i < pointsCount; ++i){
             values[i] = new FunctionPoint(x,0);
-            x+=(right-left)/pointsCount;
+            x+=(right-left)/(pointsCount-1);
         }
     }
-
-    public ArrayTabulatedFunction(double left, double right, double[] val){
-        if (Double.compare(left, right) == 1){
+    public ArrayTabulatedFunction(FunctionPoint[] points) throws IllegalStateException{
+        this.pointsCount = points.length;
+        if (this.pointsCount < 2){
+            throw new IllegalArgumentException("Мало точек");
+        }
+        for (int i = 1; i<pointsCount; i++){
+            if (points[i - 1].getX() >= points[i].getX()){
+                throw new IllegalArgumentException("точки Х не по порядку");
+            }
+        }
+        values = new FunctionPoint[pointsCount+5];
+        System.arraycopy(points, 0, values, 0, this.pointsCount);
+    }
+    public ArrayTabulatedFunction(double left, double right, double[] val) throws IllegalStateException{
+        if (Double.compare(left, right) >= 0){
             throw new IllegalArgumentException("LeftDomainBorder > RightDomainBorder");
         }
         this.pointsCount = val.length;
@@ -65,35 +81,35 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
         }
     }
 
-    public double getPointX(int index){
+    public double getPointX(int index) throws FunctionPointIndexOutOfBoundsException{
         if (index < 0 || index >= pointsCount){
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
         }
         return values[index].getX();
     }
 
-    public double getPointY(int index){
+    public double getPointY(int index) throws FunctionPointIndexOutOfBoundsException{
         if (index < 0 || index >= pointsCount){
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
         }
         return values[index].getY();
     }
 
-    public FunctionPoint getPoint(int index){
+    public FunctionPoint getPoint(int index) throws FunctionPointIndexOutOfBoundsException{
         if (index < 0 || index >= pointsCount){
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
         }
         return values[index];
     }
 
-    public void setPointY(int index, double y){
+    public void setPointY(int index, double y) throws FunctionPointIndexOutOfBoundsException{
         if (index < 0 || index >= pointsCount){
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
         }
         values[index].setY(y);
     }
 
-    public void setPointX(int index, double x) throws InappropriateFunctionPointException {
+    public void setPointX(int index, double x) throws FunctionPointIndexOutOfBoundsException, InappropriateFunctionPointException {
         if (index < 0 || index >= pointsCount){
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
         }
@@ -101,7 +117,7 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
     }
 
     //координата x задаваемой точки лежит вне интервала, определяемого значениями соседних точек табулированной функции.
-    public void setPoint(int index, FunctionPoint point) throws InappropriateFunctionPointException {
+    public void setPoint(int index, FunctionPoint point) throws FunctionPointIndexOutOfBoundsException, InappropriateFunctionPointException {
 
         if (index < 0 || index >= pointsCount){
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
@@ -120,7 +136,7 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
         }
     }
 
-    public void deletePoint(int index){
+    public void deletePoint(int index) throws FunctionPointIndexOutOfBoundsException, IllegalStateException{
         if (index < 0 || index >= pointsCount){
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
         }

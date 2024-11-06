@@ -1,6 +1,12 @@
-package functions;
+package ru.ssau.tk.cucumber.oopLab2.functions;
 
-public class FunctionPoint {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class FunctionPoint implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 5743089384985590368L;
+
     private double x;
     private double y;
     public FunctionPoint(){

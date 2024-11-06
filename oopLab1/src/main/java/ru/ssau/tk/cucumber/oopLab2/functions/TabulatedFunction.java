@@ -1,16 +1,13 @@
-package functions;
+package ru.ssau.tk.cucumber.oopLab2.functions;
 
-public interface TabulatedFunction {
-    double getLeftDomainBorder();
-    double getRightDomainBorder();
-    double getFunctionValue(double x);
+public interface TabulatedFunction extends Function {
     int getPointsCount();
-    double getPointX(int index);
-    double getPointY(int index);
-    FunctionPoint getPoint(int index);
-    void setPointY(int index, double y);
-    void setPointX(int index, double x) throws InappropriateFunctionPointException;
-    void setPoint(int index, FunctionPoint point) throws InappropriateFunctionPointException;
-    void deletePoint(int index);
+    double getPointX(int index) throws FunctionPointIndexOutOfBoundsException;
+    double getPointY(int index) throws FunctionPointIndexOutOfBoundsException;
+    FunctionPoint getPoint(int index) throws FunctionPointIndexOutOfBoundsException;
+    void setPointY(int index, double y) throws FunctionPointIndexOutOfBoundsException;
+    void setPointX(int index, double x) throws FunctionPointIndexOutOfBoundsException, InappropriateFunctionPointException;
+    void setPoint(int index, FunctionPoint point) throws FunctionPointIndexOutOfBoundsException, InappropriateFunctionPointException;
+    void deletePoint(int index) throws FunctionPointIndexOutOfBoundsException, IllegalStateException;
     void addPoint(FunctionPoint point) throws InappropriateFunctionPointException;
 }

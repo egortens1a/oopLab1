@@ -1,8 +1,14 @@
-package functions;
+package ru.ssau.tk.cucumber.oopLab2.functions;
+
+import java.io.Serial;
+import java.io.Serializable;
 
 import static java.lang.Math.abs;
 
-public class LinkedListTabulatedFunction implements TabulatedFunction{
+public class LinkedListTabulatedFunction implements TabulatedFunction, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 2964740730160414085L;
     private int pointsCount;
     private FunctionNode head;
     private FunctionNode lastUsedNode;
@@ -40,6 +46,23 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         return pointsCount;
     }
 
+    public LinkedListTabulatedFunction(FunctionPoint[] points) throws IllegalArgumentException{
+        this.pointsCount = points.length;
+        if (this.pointsCount < 2){
+            throw new IllegalArgumentException("Мало точек");
+        }
+        this.head = new FunctionNode(points[0]);
+        FunctionNode lastNode = this.head;
+
+        for (int i = 1; i<pointsCount; i++){
+            if (points[i - 1].getX() >= points[i].getX()){
+                throw new IllegalArgumentException("точки Х не по порядку");
+            }
+            lastNode.next = new FunctionNode(points[i]);
+            lastNode.next.prev=lastNode;
+            lastNode = lastNode.next;
+        }
+    }
     public LinkedListTabulatedFunction(TabulatedFunction anotherFunc){//Копируем другую функцию
         this.pointsCount = anotherFunc.getPointsCount();
         this.head = new FunctionNode(anotherFunc.getPoint(0));
@@ -53,14 +76,17 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         }
     }
 
-    public LinkedListTabulatedFunction(double left, double right, int pointsCount){
-        if (Double.compare(left, right) == 1){
+    public LinkedListTabulatedFunction(double left, double right, int pointsCount) throws IllegalArgumentException, IllegalStateException{
+        if (Double.compare(left, right) >= 0){
             throw new IllegalArgumentException("LeftDomainBorder > RightDomainBorder");
+        }
+        if (pointsCount < 3) {
+            throw new IllegalStateException("Слишком мало точек");
         }
         this.pointsCount = pointsCount;
         double x = left;
         this.head = new FunctionNode(new FunctionPoint(x,0));
-        x+=(right-left)/pointsCount;
+        x+=(right-left)/(pointsCount-1);
 
         FunctionNode lastNode = this.head;
         for (int i = 1; i < pointsCount; i++){
@@ -68,12 +94,15 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
             lastNode.next.prev=lastNode;
             lastNode = lastNode.next;
 
-            x+=(right-left)/pointsCount;
+            x+=(right-left)/(pointsCount-1);
         }
     }
-    public LinkedListTabulatedFunction(double left, double right, double[] val){
-        if (Double.compare(left, right) == 1){
+    public LinkedListTabulatedFunction(double left, double right, double[] val) throws IllegalStateException, IllegalArgumentException {
+        if (Double.compare(left, right) >= 0){
             throw new IllegalArgumentException("LeftDomainBorder > RightDomainBorder");
+        }
+        if (val.length < 3) {
+            throw new IllegalStateException("Слишком мало точек");
         }
         this.pointsCount = val.length;
         double x = left;
@@ -89,38 +118,28 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
             x+=(right-left)/pointsCount;
         }
     }
-    public double getPointX(int index){
-        if (index < 0 || index >= pointsCount){
-            throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
-        }
+    public double getPointX(int index) throws FunctionPointIndexOutOfBoundsException{
         FunctionNode curr = this.head;
         for (int i = 0; i < index; i++){
             curr = curr.next;
         }
         return getNodeByIndex(index).point.getX();
     }
-    public double getPointY(int index){
-        if (index < 0 || index > pointsCount){
-            throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
-        }
+    public double getPointY(int index) throws FunctionPointIndexOutOfBoundsException{
         return getNodeByIndex(index).point.getY();
     }
 
-    public FunctionPoint getPoint(int index){
-        if (index < 0 || index > pointsCount){
-            throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
-        }
-
+    public FunctionPoint getPoint(int index) throws FunctionPointIndexOutOfBoundsException{
         return getNodeByIndex(index).point;
     }
-    public void setPointY(int index, double y){
+    public void setPointY(int index, double y) throws FunctionPointIndexOutOfBoundsException{
         if (index < 0 || index > pointsCount){
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
         }
         getNodeByIndex(index).point.setY(y);
     }
 
-    public void setPointX(int index, double x) throws InappropriateFunctionPointException {
+    public void setPointX(int index, double x) throws InappropriateFunctionPointException, FunctionPointIndexOutOfBoundsException {
         if (index < 0 || index >= pointsCount){
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
         }
@@ -132,7 +151,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
             curr.prev.point.setX(x);
         }
     }
-    public void setPoint(int index, FunctionPoint point) throws InappropriateFunctionPointException {
+    public void setPoint(int index, FunctionPoint point) throws InappropriateFunctionPointException, FunctionPointIndexOutOfBoundsException {
         if (index < 0 || index >= pointsCount){
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
         }
@@ -147,8 +166,8 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
 
     public void addPoint(FunctionPoint p) throws InappropriateFunctionPointException {
         FunctionNode curr = this.head;
-        while(curr.next != null && Double.compare(p.getX(),curr.point.getX())>=0) {//пока не приходим в последний элемент
-            if (Double.compare(curr.point.getX(),p.getX()) == 0) { //ИЛИ не нашли такой х, который будет меньше нашего point.X
+        while(curr.next != null && Double.compare(p.getX(), curr.point.getX()) >= 0) {
+            if (Double.compare(curr.point.getX(), p.getX()) == 0) {
                 throw new InappropriateFunctionPointException("Такой X уже существует!");
             }
             curr = curr.next;
@@ -172,7 +191,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         }
     }
 
-    public void deletePoint(int index){
+    public void deletePoint(int index) throws FunctionPointIndexOutOfBoundsException, IllegalStateException{
         if (index < 0 || index >= pointsCount){
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
         }
@@ -182,22 +201,27 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
          deleteNodeByIndex(index);
     }
 
-    static class FunctionNode {
+    private static class FunctionNode implements Serializable{
+        @Serial
+        private static final long serialVersionUID = 7368238319685449514L;
         private final FunctionPoint point;
         private FunctionNode next;
         private FunctionNode prev;
+
         FunctionNode(FunctionPoint point){
             this.point = point;
         }
     }
-    private FunctionNode getNodeByIndex(int index){
+    private FunctionNode getNodeByIndex(int index) throws FunctionPointIndexOutOfBoundsException{
         if (index < 0 || index >= pointsCount) {
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
         }
+
         FunctionNode curr;
+        int i = 0;
+
         if (abs(index-lastUsedIndex) < index){//если путь через lastUsedNode будет ближе, то пользуемся им, иначе идем с головы
             curr = lastUsedNode;
-            int i = 0;
             if (index > lastUsedIndex){
                 for (i = lastUsedIndex; i<index; ++i){
                     curr = curr.next;
@@ -207,17 +231,14 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
                     curr = curr.prev;
                 }
             }
-            lastUsedIndex = i;
-            lastUsedNode = curr;
         } else {
             curr = this.head;
-            int i = 0;
             for (; i<index; ++i){
                 curr = curr.next;
             }
-            lastUsedIndex = i;
-            lastUsedNode = curr;
         }
+        lastUsedIndex = i;
+        lastUsedNode = curr;
         return curr;
     }
     private FunctionNode addNodeToTail(FunctionPoint point){
@@ -228,7 +249,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         pointsCount++;
         return newNode;
     }
-    private FunctionNode addNodeByIndex(int index, FunctionPoint point){
+    private FunctionNode addNodeByIndex(int index, FunctionPoint point)throws FunctionPointIndexOutOfBoundsException{
         if (index < 0 || index >= pointsCount) {
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
         }
@@ -240,7 +261,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         newNode.next = curr;
         return newNode;
     }
-    private FunctionNode deleteNodeByIndex(int index){
+    private FunctionNode deleteNodeByIndex(int index) throws FunctionPointIndexOutOfBoundsException, IllegalStateException{
         if (index < 0 || index >= pointsCount) {
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
         }
@@ -252,6 +273,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         if (curr == head){
             head = head.next;
             head.prev = null;
+
             return curr;
         }
         curr.prev.next = curr.next;

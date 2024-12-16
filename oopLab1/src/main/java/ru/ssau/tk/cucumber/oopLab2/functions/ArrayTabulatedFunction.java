@@ -2,8 +2,9 @@ package ru.ssau.tk.cucumber.oopLab2.functions;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
-public class ArrayTabulatedFunction implements TabulatedFunction, Serializable {
+public class ArrayTabulatedFunction implements TabulatedFunction, Serializable, Cloneable {
 
     @Serial
     private static final long serialVersionUID = -6256072091640092596L;
@@ -61,7 +62,7 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Serializable {
             throw new IllegalArgumentException("Мало точек");
         }
         for (int i = 1; i<pointsCount; i++){
-            if (points[i - 1].getX() >= points[i].getX()){
+            if (Double.compare(points[i - 1].getX(), points[i].getX()) >= 0){
                 throw new IllegalArgumentException("точки Х не по порядку");
             }
         }
@@ -77,7 +78,7 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Serializable {
         double x = left;
         for (int i = 0; i < pointsCount; ++i){
             values[i] = new FunctionPoint(x,val[i]);
-            x+=(right-left)/val.length;
+            x+=(right-left)/(pointsCount-1);
         }
     }
 
@@ -171,5 +172,45 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Serializable {
             System.arraycopy(values, index, values, index+1, pointsCount-index);
             values[index] = point;
         }
+    }
+
+    public String toString(){
+        String[] points = new String[pointsCount];
+        for (int i = 0; i<pointsCount; i++){
+            points[i] = values[i].toString();
+        }
+        return "{" + String.join(", ", points) + "}";
+    }
+
+    public boolean equals(Object o){
+        if (!(o instanceof TabulatedFunction))
+            return false;
+
+        TabulatedFunction function_o = (TabulatedFunction) o;
+
+        if (function_o.getPointsCount() != pointsCount)
+            return false;
+        else {
+            for (int i = 0; i <pointsCount; i++){
+                if (!this.getPoint(i).equals(function_o.getPoint(i)))
+                    return false;
+            }
+        }
+        return true;
+    }
+    public int hashCode(){
+        return Objects.hash(pointsCount, this.toString());
+    }
+
+    public Object clone() {
+        FunctionPoint[] cloned_points = new FunctionPoint[pointsCount];
+        for (int i = 0; i < pointsCount; i++) {
+            try {
+                cloned_points[i] = (FunctionPoint) values[i].clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+        }
+        return new ArrayTabulatedFunction(cloned_points);
     }
 }

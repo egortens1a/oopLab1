@@ -2,10 +2,11 @@ package ru.ssau.tk.cucumber.oopLab2.functions;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 import static java.lang.Math.abs;
 
-public class LinkedListTabulatedFunction implements TabulatedFunction, Serializable {
+public class LinkedListTabulatedFunction implements TabulatedFunction, Serializable, Cloneable {
 
     @Serial
     private static final long serialVersionUID = 2964740730160414085L;
@@ -55,7 +56,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
         FunctionNode lastNode = this.head;
 
         for (int i = 1; i<pointsCount; i++){
-            if (points[i - 1].getX() >= points[i].getX()){
+            if (Double.compare(points[i - 1].getX(), points[i].getX()) >= 0){
                 throw new IllegalArgumentException("точки Х не по порядку");
             }
             lastNode.next = new FunctionNode(points[i]);
@@ -143,13 +144,15 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
         if (index < 0 || index >= pointsCount){
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
         }
-        if (!(Double.compare(x, getPointX(index-1)) == 1 && Double.compare(x, getPointX(index+1)) == -1)){
+        if ((index == 0 && !(Double.compare(x, getPointX(index+1)) == -1))
+                ||
+                (index == pointsCount-1 && !(Double.compare(x, getPointX(index-1)) == 1))
+                ||
+                index != 0 && index != pointsCount-1 &&!(Double.compare(x, getPointX(index-1)) == 1
+                        && Double.compare(x, getPointX(index+1)) == -1)){
             throw new InappropriateFunctionPointException("x не попадает в промежуток (x[i-1],x[i+1]): ("+getPointX(index-1)+","+getPointX(index+1)+")");
         }
-        FunctionNode curr = getNodeByIndex(index);
-        if (Double.compare(curr.prev.point.getX(), x) == -1 && Double.compare(x, curr.next.point.getX()) == -1){
-            curr.prev.point.setX(x);
-        }
+        getNodeByIndex(index).point.setX(x);
     }
     public void setPoint(int index, FunctionPoint point) throws InappropriateFunctionPointException, FunctionPointIndexOutOfBoundsException {
         if (index < 0 || index >= pointsCount){
@@ -199,6 +202,68 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
             throw new IllegalStateException("Слишком мало точек");
         }
          deleteNodeByIndex(index);
+    }
+
+    public String toString(){
+        String[] points = new String[pointsCount];
+
+        int i = 0;
+        FunctionNode curr = head;
+        while(curr != null){
+            points[i] = curr.point.toString();
+            i++;
+            curr = curr.next;
+        }
+
+        return "{" + String.join(", ", points) + "}";
+    }
+
+    public boolean equals(Object o){
+        if (!(o instanceof TabulatedFunction))
+            return false;
+        if (pointsCount != ((TabulatedFunction) o).getPointsCount())
+            return false;
+        if (o instanceof LinkedListTabulatedFunction){
+            LinkedListTabulatedFunction function_o = (LinkedListTabulatedFunction) o;
+            FunctionNode curr = head;
+            FunctionNode curr_o = function_o.head;
+            while (curr != null){
+                if (!(curr.point.equals(curr_o.point))){
+                    return false;
+                }
+                curr = curr.next;
+                curr_o = curr_o.next;
+            }
+            return true;
+        }
+
+        TabulatedFunction function_o = (TabulatedFunction) o;
+        FunctionNode curr = head;
+        for (int i = 0; i<pointsCount; i++){
+            if ( !(curr.point.equals(function_o.getPoint(i))) ){
+                return false;
+            }
+            curr = curr.next;
+        }
+        return true;
+    }
+
+    public int hashCode(){
+        return Objects.hash(pointsCount, this.toString());
+    }
+
+    public Object clone(){
+        FunctionPoint[] cloned_points = new FunctionPoint[pointsCount];
+        FunctionNode curr = head;
+        for (int i = 0; i < pointsCount; i++) {
+            try {
+                cloned_points[i] = (FunctionPoint) curr.point.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+            curr = curr.next;
+        }
+        return new LinkedListTabulatedFunction(cloned_points);
     }
 
     private static class FunctionNode implements Serializable{

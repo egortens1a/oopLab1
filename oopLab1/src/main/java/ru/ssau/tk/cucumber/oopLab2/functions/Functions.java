@@ -26,4 +26,24 @@ public class Functions{
     public static Function composition(Function f1, Function f2){
         return new Composition(f1,f2);
     }// – возвращает объект функции, являющейся композицией двух исходных.
+
+    public static double integral(Function f1, double leftDomainBorder, double rightDomainBorder, double step) throws IllegalArgumentException{
+        try {
+            if (step <= 0) {
+                throw new IllegalArgumentException("Шаг должен быть >0 (step = " + step + ")");
+            }
+            double area = 0.0;
+            double x = leftDomainBorder;
+
+            while (x < rightDomainBorder) {
+                double currX = Math.min(x + step, rightDomainBorder);
+                area += (f1.getFunctionValue(x) + f1.getFunctionValue(currX)) / 2 * (currX - x);
+                x = currX;
+            }
+            return area;
+        }
+        catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 }

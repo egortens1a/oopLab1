@@ -3,10 +3,10 @@ package ru.ssau.tk.cucumber.oopLab2.functions.meta;
 import ru.ssau.tk.cucumber.oopLab2.functions.Function;
 
 public class Sum implements Function {
-    private double leftDomainBorder;
-    private double rightDomainBorder;
-    Function func1;
-    Function func2;
+    private final double leftDomainBorder;
+    private final double rightDomainBorder;
+    private final Function func1;
+    private final Function func2;
 
     public Sum(Function func1, Function func2){
         this.leftDomainBorder = Math.max(func1.getLeftDomainBorder(), func2.getLeftDomainBorder());

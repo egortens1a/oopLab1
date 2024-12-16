@@ -4,7 +4,8 @@ import java.io.*;
 
 public class TabulatedFunctions{
     public static TabulatedFunction tabulate(Function function, double leftX, double rightX, int pointsCount){
-        if (leftX < function.getLeftDomainBorder() || rightX > function.getRightDomainBorder()){
+        if (Double.compare(leftX, function.getLeftDomainBorder()) < 0
+                || Double.compare(rightX, function.getRightDomainBorder()) > 0){
             throw new IllegalArgumentException("Указанные границы для табулирования выходят за область определения функции");
         }
         FunctionPoint[] values = new FunctionPoint[pointsCount];
@@ -20,7 +21,7 @@ public class TabulatedFunctions{
     }// получающий функцию и возвращающий её табулированный аналог на заданном отрезке с заданным количеством точек.
 
     public static void outputTabulatedFunction(TabulatedFunction function, OutputStream out) throws IOException {
-        try (DataOutputStream dataOutput = new DataOutputStream(out);) {
+        try (DataOutputStream dataOutput = new DataOutputStream(out)) {
             int countPoints = function.getPointsCount();
             dataOutput.writeInt(countPoints);
             for (int i = 0; i < countPoints; i++) {
@@ -28,17 +29,25 @@ public class TabulatedFunctions{
                 dataOutput.writeDouble(point.getX());
                 dataOutput.writeDouble(point.getY());
             }
+        } catch (IOException e){
+            System.out.println("Ошибка!");
+            e.printStackTrace();
+            throw e;
         }
     }
 
     public static TabulatedFunction inputTabulatedFunction(InputStream in) throws IOException {
-        try (DataInputStream dataInput = new DataInputStream(in);) {
+        try (DataInputStream dataInput = new DataInputStream(in)) {
             int countPoints = dataInput.readInt();
             FunctionPoint[] points = new FunctionPoint[countPoints];
             for (int i = 0; i < countPoints; i++) {
                 points[i] = new FunctionPoint(dataInput.readDouble(), dataInput.readDouble());
             }
             return new LinkedListTabulatedFunction(points);
+        } catch (IOException e){
+            System.out.println("Ошибка!");
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -49,11 +58,15 @@ public class TabulatedFunctions{
                 FunctionPoint point = function.getPoint(i);
                 writer.write(" " + point.getX() + " " + point.getY());
             }
+        } catch (IOException e){
+            System.out.println("Ошибка!");
+            e.printStackTrace();
+            throw e;
         }
     }
 
     public static TabulatedFunction readTabulatedFunction(Reader in) throws IOException {
-        try (BufferedReader bufferedIn = new BufferedReader(in);) {
+        try (BufferedReader bufferedIn = new BufferedReader(in)) {
             StreamTokenizer tokenizer = new StreamTokenizer(bufferedIn);
             tokenizer.parseNumbers();
             tokenizer.nextToken();
@@ -70,6 +83,10 @@ public class TabulatedFunctions{
             }
 
             return new LinkedListTabulatedFunction(values); // Возвращаем новый объект
+        } catch (IOException e){
+            System.out.println("Ошибка!");
+            e.printStackTrace();
+            throw e;
         }
     }
 }

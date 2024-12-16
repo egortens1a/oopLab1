@@ -18,15 +18,9 @@ public class Shift implements Function {
     }
 
 
-    public double getLeftDomainBorder() {
-        return leftDomainBorder;
-    }
+    public double getLeftDomainBorder() { return leftDomainBorder; }
 
-    public double getRightDomainBorder() {
-        return rightDomainBorder;
-    }
+    public double getRightDomainBorder() { return rightDomainBorder; }
 
-    public double getFunctionValue(double x) {
-        return func.getFunctionValue(x - shiftX) - shiftY;
-    }
+    public double getFunctionValue(double x) { return func.getFunctionValue(x - shiftX) - shiftY; }
 }

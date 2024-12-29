@@ -14,9 +14,70 @@ public class Main {
         // lab3();
         // lab4();
         // lab5();
-        //lab6();
-
+        // lab6();
+        lab7();
     }
+
+    private static void task1(){
+        System.out.println("\n1 Задание 1 Итератор");
+        TabulatedFunction f1 = TabulatedFunctions.tabulate(new Sin(),0, 2*Math.PI,10);;
+        for (FunctionPoint p : f1) {
+            System.out.println(p);
+        }
+    }
+    private static void task2(){
+        System.out.println("\nЗадание 2. Фабрика");
+        Function f = new Cos();
+        TabulatedFunction tf;
+        tf = TabulatedFunctions.tabulate(f, 0, Math.PI, 11);
+        System.out.println(tf.getClass());
+
+        TabulatedFunctions.setTabulatedFunctionFactory(new
+                LinkedListTabulatedFunction.LinkedListTabulatedFunctionFactory());
+        tf = TabulatedFunctions.tabulate(f, 0, Math.PI, 11);
+        System.out.println(tf.getClass());
+
+        TabulatedFunctions.setTabulatedFunctionFactory(new
+                ArrayTabulatedFunction.ArrayTabulatedFunctionFactory());
+        tf = TabulatedFunctions.tabulate(f, 0, Math.PI, 11);
+        System.out.println(tf.getClass());
+    }
+    private static void task3(){
+        System.out.println("\nЗадание 3. Рефлексия");
+        TabulatedFunction f;
+
+        f = TabulatedFunctions.createTabulatedFunction(
+                ArrayTabulatedFunction.class, 0.0, 10.0, 3);
+        System.out.println(f.getClass());
+        System.out.println(f);
+
+        f = TabulatedFunctions.createTabulatedFunction(
+                ArrayTabulatedFunction.class, 0, 10, new double[] {0, 10});
+        System.out.println(f.getClass());
+        System.out.println(f);
+
+        f = TabulatedFunctions.createTabulatedFunction(
+                LinkedListTabulatedFunction.class,
+                new FunctionPoint[] {
+                        new FunctionPoint(0, 0),
+                        new FunctionPoint(10, 10)
+                }
+        );
+        System.out.println(f.getClass());
+        System.out.println(f);
+
+        f = TabulatedFunctions.tabulate(
+                LinkedListTabulatedFunction.class, new Sin(), 0, Math.PI, 11);
+        System.out.println(f.getClass());
+        System.out.println(f);
+    }
+    private static void lab7(){
+        System.out.println("LLL_7_лаба_LLL");
+        task1();
+        task2();
+        task3();
+    }
+
     private static void complicatedThreads(){
         int taskCount = 100; // Минимум 100 заданий
         Task task = new Task(null, 0, 0, 0, taskCount);
@@ -277,7 +338,6 @@ public class Main {
 
         checkErrors(func1);
     }
-
     private static void printFunctionWithStep(Function func, double currValue, double end, double step){
         System.out.println("x  |  y");
 

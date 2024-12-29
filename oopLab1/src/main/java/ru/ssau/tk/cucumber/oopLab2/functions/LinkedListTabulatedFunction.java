@@ -2,11 +2,13 @@ package ru.ssau.tk.cucumber.oopLab2.functions;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import static java.lang.Math.abs;
 
-public class LinkedListTabulatedFunction implements TabulatedFunction, Serializable, Cloneable {
+public class LinkedListTabulatedFunction implements TabulatedFunction, Serializable, Cloneable, Iterable<FunctionPoint> {
 
     @Serial
     private static final long serialVersionUID = 2964740730160414085L;
@@ -18,9 +20,11 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
     public double getLeftDomainBorder(){
         return this.head.point.getX();
     }
+
     public double getRightDomainBorder(){
         return this.getNodeByIndex(pointsCount-1).point.getX();
     }
+
     public double getFunctionValue(double x) {
         if (Double.compare(getLeftDomainBorder(), x) <= 0 && Double.compare(x, getRightDomainBorder()) <= 0) {//double compare
             FunctionNode curr = head.next;
@@ -47,6 +51,19 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
         return pointsCount;
     }
 
+    public LinkedListTabulatedFunction(TabulatedFunction anotherFunc){//Копируем другую функцию
+        this.pointsCount = anotherFunc.getPointsCount();
+        this.head = new FunctionNode(anotherFunc.getPoint(0));
+
+        FunctionNode lastNode = this.head;
+
+        for (int i = 1; i < pointsCount; i++){
+            lastNode.next = new FunctionNode(anotherFunc.getPoint(i));
+            lastNode.next.prev=lastNode;
+            lastNode = lastNode.next;
+        }
+    }
+
     public LinkedListTabulatedFunction(FunctionPoint[] points) throws IllegalArgumentException{
         this.pointsCount = points.length;
         if (this.pointsCount < 2){
@@ -60,18 +77,6 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
                 throw new IllegalArgumentException("точки Х не по порядку");
             }
             lastNode.next = new FunctionNode(points[i]);
-            lastNode.next.prev=lastNode;
-            lastNode = lastNode.next;
-        }
-    }
-    public LinkedListTabulatedFunction(TabulatedFunction anotherFunc){//Копируем другую функцию
-        this.pointsCount = anotherFunc.getPointsCount();
-        this.head = new FunctionNode(anotherFunc.getPoint(0));
-
-        FunctionNode lastNode = this.head;
-
-        for (int i = 1; i < pointsCount; i++){
-            lastNode.next = new FunctionNode(anotherFunc.getPoint(i));
             lastNode.next.prev=lastNode;
             lastNode = lastNode.next;
         }
@@ -98,6 +103,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
             x+=(right-left)/(pointsCount-1);
         }
     }
+
     public LinkedListTabulatedFunction(double left, double right, double[] val) throws IllegalStateException, IllegalArgumentException {
         if (Double.compare(left, right) >= 0){
             throw new IllegalArgumentException("LeftDomainBorder > RightDomainBorder");
@@ -119,6 +125,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
             x+=(right-left)/pointsCount;
         }
     }
+
     public double getPointX(int index) throws FunctionPointIndexOutOfBoundsException{
         FunctionNode curr = this.head;
         for (int i = 0; i < index; i++){
@@ -126,6 +133,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
         }
         return getNodeByIndex(index).point.getX();
     }
+
     public double getPointY(int index) throws FunctionPointIndexOutOfBoundsException{
         return getNodeByIndex(index).point.getY();
     }
@@ -133,6 +141,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
     public FunctionPoint getPoint(int index) throws FunctionPointIndexOutOfBoundsException{
         return getNodeByIndex(index).point;
     }
+
     public void setPointY(int index, double y) throws FunctionPointIndexOutOfBoundsException{
         if (index < 0 || index > pointsCount){
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
@@ -154,6 +163,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
         }
         getNodeByIndex(index).point.setX(x);
     }
+
     public void setPoint(int index, FunctionPoint point) throws InappropriateFunctionPointException, FunctionPointIndexOutOfBoundsException {
         if (index < 0 || index >= pointsCount){
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
@@ -266,6 +276,32 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
         return new LinkedListTabulatedFunction(cloned_points);
     }
 
+    @Override
+    public Iterator<FunctionPoint> iterator() {
+        return new Iterator<FunctionPoint>() {
+            private FunctionNode node = head;
+
+            @Override
+            public boolean hasNext() {
+                return node != null;
+            }
+
+            @Override
+            public FunctionPoint next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                FunctionPoint point = new FunctionPoint(node.point.getX(), node.point.getY());
+                if (node.next == head) {
+                    node = null;
+                } else {
+                    node = node.next;
+                }
+                return point;
+            }
+        };
+    }
+
     private static class FunctionNode implements Serializable{
         @Serial
         private static final long serialVersionUID = 7368238319685449514L;
@@ -277,6 +313,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
             this.point = point;
         }
     }
+
     private FunctionNode getNodeByIndex(int index) throws FunctionPointIndexOutOfBoundsException{
         if (index < 0 || index >= pointsCount) {
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
@@ -306,6 +343,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
         lastUsedNode = curr;
         return curr;
     }
+
     private FunctionNode addNodeToTail(FunctionPoint point){
         FunctionNode lastNode = getNodeByIndex(pointsCount-1);
         FunctionNode newNode = new FunctionNode(point);
@@ -314,6 +352,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
         pointsCount++;
         return newNode;
     }
+
     private FunctionNode addNodeByIndex(int index, FunctionPoint point)throws FunctionPointIndexOutOfBoundsException{
         if (index < 0 || index >= pointsCount) {
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
@@ -326,6 +365,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
         newNode.next = curr;
         return newNode;
     }
+
     private FunctionNode deleteNodeByIndex(int index) throws FunctionPointIndexOutOfBoundsException, IllegalStateException{
         if (index < 0 || index >= pointsCount) {
             throw new FunctionPointIndexOutOfBoundsException("Нет такого индекса!");
@@ -344,5 +384,23 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Serializa
         curr.prev.next = curr.next;
         curr.next.prev = curr.prev;
         return curr;
+    }
+
+    public static class LinkedListTabulatedFunctionFactory implements TabulatedFunctionFactory{
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(FunctionPoint[] points) {
+            return new LinkedListTabulatedFunction(points);
+        }
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(double left, double right, int pointsCount) {
+            return new LinkedListTabulatedFunction(left, right, pointsCount);
+        }
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(double left, double right, double[] val) {
+            return new LinkedListTabulatedFunction(left, right, val);
+        }
     }
 }

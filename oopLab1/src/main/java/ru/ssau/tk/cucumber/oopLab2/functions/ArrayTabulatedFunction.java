@@ -2,9 +2,11 @@ package ru.ssau.tk.cucumber.oopLab2.functions;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
-public class ArrayTabulatedFunction implements TabulatedFunction, Serializable, Cloneable {
+public class ArrayTabulatedFunction implements TabulatedFunction, Serializable, Cloneable, Iterable<FunctionPoint> {
 
     @Serial
     private static final long serialVersionUID = -6256072091640092596L;
@@ -213,4 +215,49 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Serializable, 
         }
         return new ArrayTabulatedFunction(cloned_points);
     }
+
+    @Override
+    public Iterator<FunctionPoint> iterator() {
+        return new Iterator<FunctionPoint>() {
+            private int index = 0;
+
+            @Override
+            public boolean hasNext() {
+                return index != pointsCount;
+            }
+
+            @Override
+            public FunctionPoint next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                FunctionPoint point = null;
+                try {
+                    point = (FunctionPoint) getPoint(index).clone();
+                } catch (CloneNotSupportedException e) {
+                    throw new RuntimeException(e);
+                }
+                index++;
+                return point;
+            }
+        };
+    }
+    public static class ArrayTabulatedFunctionFactory implements TabulatedFunctionFactory{
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(FunctionPoint[] points) {
+            return new ArrayTabulatedFunction(points);
+        }
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(double left, double right, int pointsCount) {
+            return new ArrayTabulatedFunction(left, right, pointsCount);
+        }
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(double left, double right, double[] val) {
+            return new ArrayTabulatedFunction(left, right, val);
+        }
+    }
+
 }

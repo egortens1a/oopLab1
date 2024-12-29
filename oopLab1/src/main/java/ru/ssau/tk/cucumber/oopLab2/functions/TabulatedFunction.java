@@ -1,6 +1,6 @@
 package ru.ssau.tk.cucumber.oopLab2.functions;
 
-public interface TabulatedFunction extends Function, Cloneable {
+public interface TabulatedFunction extends Function, Cloneable, Iterable<FunctionPoint> {
     int getPointsCount();
 
     double getPointX(int index)
